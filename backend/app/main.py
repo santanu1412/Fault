@@ -112,3 +112,20 @@ app.include_router(tickets_router, prefix="/api")
 app.include_router(simulator_router, prefix="/api")
 app.include_router(topology_router, prefix="/api")
 app.include_router(events_router, prefix="/api")
+
+# Register non-prefixed health & root fallback routes for direct Vercel serverless calls
+app.include_router(health_router)
+
+
+@app.get("/")
+@app.get("/api")
+@app.get("/api/")
+async def root():
+    return {
+        "status": "healthy",
+        "name": "KSPDB Fault Localization System",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/api/health",
+    }
+
