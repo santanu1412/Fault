@@ -6,8 +6,10 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """All settings loaded from environment variables with sensible defaults."""
 
-    # Database & Redis
-    database_url: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./fault.db")
+    database_url: str = os.getenv(
+        "DATABASE_URL",
+        "sqlite+aiosqlite:////tmp/fault.db" if os.getenv("VERCEL") else "sqlite+aiosqlite:///./fault.db",
+    )
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
     # Server
