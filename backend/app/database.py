@@ -11,7 +11,9 @@ from app.config import settings
 
 is_sqlite = settings.database_url.startswith("sqlite")
 engine_kwargs = {"echo": False}
-if not is_sqlite:
+if is_sqlite:
+    engine_kwargs.update({"connect_args": {"check_same_thread": False}})
+else:
     engine_kwargs.update({"pool_size": 20, "max_overflow": 10, "pool_pre_ping": True})
 
 engine = create_async_engine(
