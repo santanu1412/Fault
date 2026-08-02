@@ -1,0 +1,122 @@
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: #0a0e17;
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #111827;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+}
+
+@layer components {
+  /* Status badges */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-live {
+    @apply bg-grid-live/20 text-grid-live;
+  }
+
+  .badge-dark {
+    @apply bg-grid-dark/20 text-grid-dark;
+  }
+
+  .badge-suspect {
+    @apply bg-grid-suspect/20 text-grid-suspect;
+  }
+
+  .badge-unknown {
+    @apply bg-grid-unknown/20 text-grid-unknown;
+  }
+
+  /* Confidence indicators */
+  .confidence-high {
+    @apply text-accent-success;
+  }
+
+  .confidence-medium {
+    @apply text-accent-warning;
+  }
+
+  .confidence-low {
+    @apply text-accent-danger;
+  }
+
+  /* Panel styling */
+  .panel {
+    @apply bg-surface-800 border border-surface-500/30 rounded-lg;
+  }
+
+  .panel-header {
+    @apply px-4 py-3 border-b border-surface-500/30 flex items-center justify-between;
+  }
+
+  /* Button styles */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-900
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent-primary hover:bg-accent-primary/80 text-white focus:ring-accent-primary;
+  }
+
+  .btn-danger {
+    @apply btn bg-accent-danger hover:bg-accent-danger/80 text-white focus:ring-accent-danger;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-surface-700 text-gray-300 border border-surface-500/50;
+  }
+
+  .btn-success {
+    @apply btn bg-accent-success hover:bg-accent-success/80 text-white focus:ring-accent-success;
+  }
+
+  /* Pulse animation for active faults */
+  .fault-pulse {
+    animation: faultPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes faultPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  }
+}

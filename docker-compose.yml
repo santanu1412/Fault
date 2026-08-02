@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fault_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fault_pass_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-fault_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fault_user} -d ${POSTGRES_DB:-fault_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-fault_user}:${POSTGRES_PASSWORD:-fault_pass_dev}@db:5432/${POSTGRES_DB:-fault_db}
+      BACKEND_HOST: "0.0.0.0"
+      BACKEND_PORT: "8000"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      POLL_INTERVAL_SECONDS: ${POLL_INTERVAL_SECONDS:-3}
+      HEARTBEAT_TIMEOUT_MINUTES: ${HEARTBEAT_TIMEOUT_MINUTES:-16}
+      DEBOUNCE_MISSED_HEARTBEATS: ${DEBOUNCE_MISSED_HEARTBEATS:-2}
+      OUTAGE_BUFFER_MINUTES: ${OUTAGE_BUFFER_MINUTES:-15}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-claude-sonnet-4-20250514}
+      AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-3}
+      SEED_SUBSTATIONS: ${SEED_SUBSTATIONS:-4}
+      SEED_FEEDERS_PER_SUB: ${SEED_FEEDERS_PER_SUB:-3}
+      SEED_DTS_PER_FEEDER: ${SEED_DTS_PER_FEEDER:-8}
+      SEED_POLES_PER_DT_MIN: ${SEED_POLES_PER_DT_MIN:-15}
+      SEED_POLES_PER_DT_MAX: ${SEED_POLES_PER_DT_MAX:-60}
+      SEED_KNOWN_TOPOLOGY_PCT: ${SEED_KNOWN_TOPOLOGY_PCT:-0.40}
+      SEED_DEVICE_COVERAGE_PCT: ${SEED_DEVICE_COVERAGE_PCT:-0.91}
+      SEED_MISSING_PINCODE_PCT: ${SEED_MISSING_PINCODE_PCT:-0.03}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
