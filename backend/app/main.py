@@ -56,25 +56,26 @@ async def lifespan(app: FastAPI):
     # Build topology cache
     await build_topology_cache()
 
-    # Start Redis event broadcaster & telemetry stream consumer
-    await broadcaster.start()
-    _consumer_task = asyncio.create_task(telemetry_consumer.start())
-
-    # Start background scheduler
-    _scheduler_task = asyncio.create_task(scheduler_loop())
-    logger.info("Background scheduler started.")
+    # Only start background Redis/scheduler workers if NOT in Vercel serverless
+    if not os.getenv("VERCEL"):
+        await broadcaster.start()
+        _consumer_task = asyncio.create_task(telemetry_consumer.start())
+        _scheduler_task = asyncio.create_task(scheduler_loop())
+        logger.info("Background scheduler started.")
 
     yield
 
     # Shutdown
     logger.info("Shutting down...")
-    await telemetry_consumer.stop()
     if _consumer_task:
+        await telemetry_consumer.stop()
         _consumer_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await _consumer_task
 
-    await broadcaster.stop()
+    if not os.getenv("VERCEL"):
+        await broadcaster.stop()
+
     if _scheduler_task:
         _scheduler_task.cancel()
         try:
