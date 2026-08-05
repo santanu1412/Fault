@@ -6,10 +6,20 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """All settings loaded from environment variables with sensible defaults."""
 
-    database_url: str = os.getenv(
+    _raw_database_url: str = os.getenv(
         "DATABASE_URL",
         "sqlite+aiosqlite:////tmp/fault.db" if os.getenv("VERCEL") else "sqlite+aiosqlite:///./fault.db",
     )
+
+    @property
+    def database_url(self) -> str:
+        url = self._raw_database_url
+        if url.startswith("postgres://"):
+            return url.replace("postgres://", "postgresql+asyncpg://", 1)
+        if url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
+
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
     # Server

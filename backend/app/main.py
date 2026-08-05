@@ -44,18 +44,21 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting KSPDB Fault Localization System...")
 
-    # Initialize database tables
-    await init_db()
-    logger.info("Database tables initialized.")
+    try:
+        # Initialize database tables
+        await init_db()
+        logger.info("Database tables initialized.")
 
-    # Seed data if needed
-    async with async_session() as session:
-        seeded = await seed_if_needed(session)
-        if seeded:
-            logger.info("Database seeded with synthetic data.")
+        # Seed data if needed
+        async with async_session() as session:
+            seeded = await seed_if_needed(session)
+            if seeded:
+                logger.info("Database seeded with synthetic data.")
 
-    # Build topology cache
-    await build_topology_cache()
+        # Build topology cache
+        await build_topology_cache()
+    except Exception as e:
+        logger.error(f"Startup initialization failed: {e}", exc_info=True)
 
     # Only start background Redis/scheduler workers if NOT in Vercel serverless
     if not os.getenv("VERCEL"):
