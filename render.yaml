@@ -6,6 +6,7 @@ services:
     plan: free
     region: oregon
     dockerContext: backend
+    dockerfilePath: backend/Dockerfile
     envVars:
       - key: DATABASE_URL
         value: postgresql+asyncpg://fault_user:ve9NaUQwQH4sPx5F50o1sg6FeH2aPeLb@dpg-d9phbhv10e5c73de2ktg-a/fault
