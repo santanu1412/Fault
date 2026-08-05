@@ -8,7 +8,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { usePolling } from './hooks/usePolling';
 import { useSSE } from './hooks/useSSE';
-import { api } from './api/client';
+import { api, API_BASE } from './api/client';
 import { Ticket, PoleData, TransformerData, NetworkStats, HealthStatus } from './types';
 import IncidentList from './components/IncidentList/IncidentList';
 import TicketDetail from './components/TicketDetail/TicketDetail';
@@ -29,7 +29,7 @@ function App() {
   }, []);
 
   // SSE Stream integration for sub-second notifications
-  const { isConnected: isSseConnected, lastEvent } = useSSE('/api/events/stream');
+  const { isConnected: isSseConnected, lastEvent } = useSSE(`${API_BASE}/events/stream`);
 
   useEffect(() => {
     if (!lastEvent) return;

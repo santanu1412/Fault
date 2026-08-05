@@ -2,7 +2,7 @@
  * API client for the KSPDB Fault Localization System.
  */
 
-const API_BASE = '/api';
+export const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`, {
