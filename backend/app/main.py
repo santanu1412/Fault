@@ -50,10 +50,13 @@ async def lifespan(app: FastAPI):
         logger.info("Database tables initialized.")
 
         # Seed data if needed
-        async with async_session() as session:
-            seeded = await seed_if_needed(session)
-            if seeded:
-                logger.info("Database seeded with synthetic data.")
+        if not os.getenv("VERCEL"):
+            async with async_session() as session:
+                seeded = await seed_if_needed(session)
+                if seeded:
+                    logger.info("Database seeded with synthetic data.")
+        else:
+            logger.info("Skipping database seeding on Vercel to avoid cold start timeouts.")
 
         # Build topology cache
         await build_topology_cache()

@@ -6,9 +6,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """All settings loaded from environment variables with sensible defaults."""
 
-    _raw_database_url: str = os.getenv(
-        "DATABASE_URL",
-        "sqlite+aiosqlite:////tmp/fault.db" if os.getenv("VERCEL") else "sqlite+aiosqlite:///./fault.db",
+    _raw_database_url: str = os.getenv("DATABASE_URL") or (
+        "sqlite+aiosqlite:////tmp/fault.db" if os.getenv("VERCEL") else "sqlite+aiosqlite:///./fault.db"
     )
 
     @property
