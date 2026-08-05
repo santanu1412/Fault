@@ -3,6 +3,7 @@ services:
   - type: web
     name: fault-backend
     env: docker
+    plan: free
     region: oregon
     dockerContext: backend
     envVars:
