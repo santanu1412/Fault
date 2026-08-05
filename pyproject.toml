@@ -1,2 +1,5 @@
 [tool.vercel]
 entrypoint = "api.index:app"
+
+[tool.pyright]
+extraPaths = ["backend"]
