@@ -18,14 +18,18 @@ import os
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import AsyncIterator, Literal
+from typing import AsyncIterator, Literal, Any
 
 try:
     import redis.asyncio as redis
     from redis.asyncio.client import PubSub
+    RedisType = redis.Redis
+    PubSubType = PubSub
 except ImportError:
     redis = None  # type: ignore
     PubSub = None  # type: ignore
+    RedisType = Any
+    PubSubType = Any
 
 log = logging.getLogger("fault_system.redis_broadcaster")
 
@@ -125,8 +129,8 @@ class RedisBroadcaster:
     def __init__(self, url: str | None = None, *, local_only: bool = False):
         self._url = url or os.getenv("REDIS_URL", "redis://localhost:6379/0")
         self._local_only = local_only
-        self._redis: redis.Redis | None = None
-        self._pubsub: PubSub | None = None
+        self._redis: RedisType | None = None
+        self._pubsub: PubSubType | None = None
         self._listener: asyncio.Task | None = None
         self._heartbeat: asyncio.Task | None = None
         self._subs: set[Subscriber] = set()

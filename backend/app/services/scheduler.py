@@ -160,8 +160,7 @@ async def _create_or_update_incident(
         f"Created incident #{incident.id}: {detected.kind} on {detected.dt_id or detected.feeder_id}, "
         f"{len(detected.dark_pole_ids)} dark poles, confidence={detected.confidence}"
     )
-
-    return int(incident.id) if incident.id else None
+    return int(incident.id) if incident.id else None  # type: ignore
 
 
 async def run_localization_cycle():

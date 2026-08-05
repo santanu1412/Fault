@@ -54,7 +54,7 @@ async def event_stream(
                     for stream_name, msgs in entries:
                         for msg_id, fields in msgs:
                             if "e" in fields:
-                                event = broadcaster.Event.from_json(fields["e"])
+                                event = Event.from_json(fields["e"])
                                 yield event.sse()
             except Exception as e:
                 logger.warning(f"Replay stream read error for Last-Event-ID {header_last_id}: {e}")
