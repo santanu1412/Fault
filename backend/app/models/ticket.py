@@ -33,10 +33,10 @@ class Ticket(Base):
     __tablename__ = "tickets"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    incident_id = Column(
+    incident_id: int = Column(  # type: ignore
         Integer, ForeignKey("incidents.id"), nullable=False, unique=True, index=True
     )
-    status = Column(String, nullable=False, default="detected")
+    status: str = Column(String, nullable=False, default="detected")  # type: ignore
     history = Column(JSONType, nullable=False, default=list)
     # e.g. [{"ts": "...", "from": "detected", "to": "acknowledged", "actor": "operator", "reason": "..."}]
     ai_narrative = Column(Text, nullable=True)

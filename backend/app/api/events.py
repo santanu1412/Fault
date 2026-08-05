@@ -10,14 +10,16 @@ import logging
 from fastapi import APIRouter, Query, Request
 from starlette.responses import StreamingResponse
 
-from app.services.redis_broadcaster import STREAM_KEY, broadcaster
+from app.services.redis_broadcaster import STREAM_KEY, Event, broadcaster
 
 logger = logging.getLogger("fault_system.events")
 
 router = APIRouter(tags=["events"])
 
 
-async def publish_event(event_type: str, data: dict, **scope):
+from typing import Any
+
+async def publish_event(event_type: Any, data: dict, **scope):
     """Helper function to publish an event asynchronously."""
     if event_type == "fault_detected":
         await broadcaster.fault_detected(data, **scope)
@@ -26,7 +28,7 @@ async def publish_event(event_type: str, data: dict, **scope):
     elif event_type == "override_executed":
         await broadcaster.override_executed(data, **scope)
     else:
-        await broadcaster.publish(broadcaster.Event(event_type, data, **scope))
+        await broadcaster.publish(Event(event_type, data, **scope))
 
 
 @router.get("/events/stream")

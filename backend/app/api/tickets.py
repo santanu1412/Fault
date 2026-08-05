@@ -46,13 +46,13 @@ async def list_tickets(
     """List tickets, sorted by most recent first."""
     query = (
         select(Ticket, Incident)
-        .join(Incident, Ticket.incident_id == Incident.id)
+        .join(Incident, Ticket.incident_id == Incident.id)  # type: ignore
         .order_by(desc(Ticket.created_at))
         .limit(limit)
     )
 
     if status:
-        query = query.where(Ticket.status == status)
+        query = query.where(Ticket.status == status)  # type: ignore
 
     result = await session.execute(query)
     rows = result.all()
@@ -95,7 +95,7 @@ async def get_ticket(
     """Get full ticket detail with incident information."""
     result = await session.execute(
         select(Ticket, Incident)
-        .join(Incident, Ticket.incident_id == Incident.id)
+        .join(Incident, Ticket.incident_id == Incident.id)  # type: ignore
         .where(Ticket.id == ticket_id)
     )
     row = result.one_or_none()
@@ -169,7 +169,7 @@ async def ask_question(
     """Ask a question about a ticket — answered using only the ticket's data."""
     result = await session.execute(
         select(Ticket, Incident)
-        .join(Incident, Ticket.incident_id == Incident.id)
+        .join(Incident, Ticket.incident_id == Incident.id)  # type: ignore
         .where(Ticket.id == ticket_id)
     )
     row = result.one_or_none()
@@ -201,7 +201,7 @@ async def ask_question(
     return {"answer": answer}
 
 
-@router.post("/{ticket_id}/force-close")
+@router.post("/tickets/{ticket_id}/force-close")
 async def force_close(
     ticket_id: int,
     request: ForceCloseRequest,

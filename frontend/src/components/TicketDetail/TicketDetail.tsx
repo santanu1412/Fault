@@ -81,7 +81,7 @@ export default function TicketDetail({ ticket, onUpdate }: Props) {
   };
 
   const confidencePct = Math.round(inc.confidence * 100);
-  const breakdown = (inc as any).confidence_breakdown as Record<string, number> | undefined;
+  const breakdown = (inc as { confidence_breakdown?: Record<string, number> }).confidence_breakdown;
 
   return (
     <div className="h-full flex flex-col overflow-y-auto">

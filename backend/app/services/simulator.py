@@ -74,7 +74,7 @@ async def simulate_span_fault(
         # else: FW 1.2 silent death — no message sent
 
     # Ingest the generated telemetry
-    result = await ingest_telemetry(session, messages)
+    ingest_res = await ingest_telemetry(session, messages)
 
     return {
         "scenario": "span_fault",
@@ -82,7 +82,7 @@ async def simulate_span_fault(
         "affected_poles": len(affected_poles),
         "messages_sent": len(messages),
         "messages_dropped": len(affected_poles) - len(messages),
-        "ingest_result": result,
+        "ingest_result": ingest_res,
     }
 
 
@@ -150,13 +150,13 @@ async def simulate_sensor_death(
         "fw": "1.2",  # Known problematic firmware
     }]
 
-    result = await ingest_telemetry(session, messages)
+    ingest_res = await ingest_telemetry(session, messages)
 
     return {
         "scenario": "sensor_death",
         "pole_id": pole_id,
         "device_id": pole.device_id,
-        "ingest_result": result,
+        "ingest_result": ingest_res,
     }
 
 
@@ -193,13 +193,13 @@ async def simulate_repair(
                 "fw": random.choice(["2.0", "2.1"]),
             })
 
-    result = await ingest_telemetry(session, messages)
+    ingest_res = await ingest_telemetry(session, messages)
 
     return {
         "scenario": "repair",
         "incident_id": incident_id,
         "poles_restored": len(messages),
-        "ingest_result": result,
+        "ingest_result": ingest_res,
     }
 
 
@@ -228,12 +228,12 @@ async def simulate_heartbeat_burst(
             "fw": random.choice(["1.0", "1.1", "2.0", "2.1"]),
         })
 
-    result = await ingest_telemetry(session, messages)
+    ingest_res = await ingest_telemetry(session, messages)
 
     return {
         "scenario": "heartbeat_burst",
         "messages_sent": len(messages),
-        "ingest_result": result,
+        "ingest_result": ingest_res,
     }
 
 

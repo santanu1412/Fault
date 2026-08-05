@@ -17,7 +17,7 @@ class Pole(Base):
     dt_id = Column(String, ForeignKey("transformers.dt_id"), nullable=False, index=True)
     seq_on_line = Column(Float, nullable=True)  # NULL for ~60% of DTs
     parent_pole_id = Column(String, nullable=True)  # May reference ROOT-{dt_id} virtual node
-    pole_type = Column(
+    pole_type: str = Column(
         SAEnum("wooden", "steel", "concrete", "rcc", name="pole_type_enum"),
         nullable=False,
         default="concrete",

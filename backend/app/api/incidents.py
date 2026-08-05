@@ -25,9 +25,9 @@ async def list_incidents(
     query = select(Incident).order_by(desc(Incident.created_at)).limit(limit)
 
     if status:
-        query = query.where(Incident.status == status)
+        query = query.where(Incident.status == status)  # type: ignore
     if kind:
-        query = query.where(Incident.kind == kind)
+        query = query.where(Incident.kind == kind)  # type: ignore
     if feeder_id:
         query = query.where(Incident.feeder_id == feeder_id)
     if dt_id:
@@ -124,7 +124,7 @@ async def get_network_stats(
 
     # Count poles by state
     result = await session.execute(
-        select(
+        select(  # type: ignore
             PoleState.classification,
             func.count(PoleState.pole_id),
         ).group_by(PoleState.classification)

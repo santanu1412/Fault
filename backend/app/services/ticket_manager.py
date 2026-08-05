@@ -26,7 +26,7 @@ async def create_ticket_for_incident(
     """Create a ticket for a new incident, if one doesn't already exist."""
     # Check if ticket already exists for this incident
     result = await session.execute(
-        select(Ticket).where(Ticket.incident_id == incident_id)
+        select(Ticket).where(Ticket.incident_id == incident_id)  # type: ignore
     )
     existing = result.scalar_one_or_none()
     if existing:
@@ -73,7 +73,7 @@ async def transition_ticket(
     if not ticket:
         raise TransitionError(f"Ticket #{ticket_id} not found")
 
-    current_status = ticket.status
+    current_status = str(ticket.status)
 
     # Check if transition is valid
     valid_targets = VALID_TRANSITIONS.get(current_status, [])
@@ -85,7 +85,7 @@ async def transition_ticket(
 
     # Special validation: cannot resolve if poles are still dark
     if target_status == "resolved":
-        still_dark = await _check_poles_still_dark(session, ticket.incident_id)
+        still_dark = await _check_poles_still_dark(session, int(ticket.incident_id))
         if still_dark:
             dark_ids = ", ".join(still_dark[:5])
             suffix = f" and {len(still_dark) - 5} more" if len(still_dark) > 5 else ""
@@ -150,7 +150,7 @@ async def auto_verify_ticket(
     if not ticket or ticket.status != "resolved":
         return False
 
-    still_dark = await _check_poles_still_dark(session, ticket.incident_id)
+    still_dark = await _check_poles_still_dark(session, int(ticket.incident_id))
     if still_dark:
         return False
 
@@ -194,7 +194,7 @@ async def _check_poles_still_dark(
     Uses a single batched query instead of per-pole lookups.
     """
     result = await session.execute(
-        select(Incident.dark_pole_ids).where(Incident.id == incident_id)
+        select(Incident.dark_pole_ids).where(Incident.id == incident_id)  # type: ignore
     )
     row = result.one_or_none()
     if not row or not row[0]:
@@ -204,7 +204,7 @@ async def _check_poles_still_dark(
 
     # Batch query: get all pole states at once
     result = await session.execute(
-        select(PoleState.pole_id, PoleState.classification)
+        select(PoleState.pole_id, PoleState.classification)  # type: ignore
         .where(
             PoleState.pole_id.in_(dark_pole_ids),
             PoleState.classification == "dark_confirmed",
@@ -237,7 +237,7 @@ async def force_close_ticket(
         return ticket
 
     now = datetime.now(timezone.utc)
-    still_dark = await _check_poles_still_dark(session, ticket.incident_id)
+    still_dark = await _check_poles_still_dark(session, int(ticket.incident_id))
 
     history_entry = {
         "ts": now.isoformat(),

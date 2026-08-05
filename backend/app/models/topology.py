@@ -16,7 +16,7 @@ class TopologyEdge(Base):
         String, nullable=False, index=True
     )  # May reference ROOT-{dt_id} virtual nodes not in poles table
     dt_id = Column(String, ForeignKey("transformers.dt_id"), nullable=False, index=True)
-    source = Column(
+    source: str = Column(
         SAEnum("surveyed", "inferred", name="topology_source_enum"),
         nullable=False,
     )

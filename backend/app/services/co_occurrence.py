@@ -103,7 +103,7 @@ async def calculate_co_occurrence_matrix(
 
     # 1. Fetch historical incidents within the lookback window
     stmt = (
-        select(Incident.dark_pole_ids)
+        select(Incident.dark_pole_ids)  # type: ignore
         .where(Incident.created_at >= cutoff_dt)
     )
     result = await session.execute(stmt)

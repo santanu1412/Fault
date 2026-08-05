@@ -19,7 +19,7 @@ from app.services.ingest import ingest_telemetry
 try:
     import redis.asyncio as redis
 except ImportError:
-    redis = None
+    redis = None  # type: ignore
 
 logger = logging.getLogger("fault_system.telemetry_consumer")
 
@@ -86,7 +86,7 @@ class TelemetryConsumer:
         while self._running:
             try:
                 # 1. Read new pending messages for this consumer group
-                entries = await self._redis.xreadgroup(
+                entries = await self._redis.xreadgroup(  # type: ignore
                     groupname=CONSUMER_GROUP,
                     consumername=CONSUMER_NAME,
                     streams={STREAM_NAME: ">"},

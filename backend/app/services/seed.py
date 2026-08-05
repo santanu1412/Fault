@@ -297,7 +297,7 @@ async def seed_if_needed(session: AsyncSession) -> bool:
         min(3, len(all_transformers)),
     )
     for dt_id in outage_dts:
-        outage = {
+        outage = {  # type: ignore
             "scope": "dt",
             "target_id": dt_id,
             "start_at": now + timedelta(hours=random.randint(1, 12)),

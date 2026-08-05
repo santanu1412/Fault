@@ -24,8 +24,8 @@ try:
     import redis.asyncio as redis
     from redis.asyncio.client import PubSub
 except ImportError:
-    redis = None
-    PubSub = None
+    redis = None  # type: ignore
+    PubSub = None  # type: ignore
 
 log = logging.getLogger("fault_system.redis_broadcaster")
 
@@ -138,6 +138,7 @@ class RedisBroadcaster:
             log.warning("RedisBroadcaster running in LOCAL-ONLY mode (dev)")
             return
         try:
+            assert self._url is not None
             self._redis = redis.from_url(
                 self._url,
                 decode_responses=True,

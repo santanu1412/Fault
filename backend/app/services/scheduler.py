@@ -47,7 +47,7 @@ def get_trees_cache() -> dict[str, DtTree]:
 async def _load_pole_states(session: AsyncSession) -> dict[str, PoleStateInfo]:
     """Load all pole states into a dict for localization."""
     result = await session.execute(
-        select(
+        select(  # type: ignore
             PoleState.pole_id,
             PoleState.energized,
             PoleState.classification,
@@ -116,13 +116,13 @@ async def _create_or_update_incident(
     pincode = detected.pincode
     if not pincode:
         for pid in detected.dark_pole_ids:
-            result = await session.execute(
+            pin_res = await session.execute(
                 select(Pole.pincode).where(
                     Pole.pole_id == pid,
                     Pole.pincode.isnot(None),
                 )
             )
-            pin = result.scalar()
+            pin = pin_res.scalar()
             if pin:
                 pincode = pin
                 break
@@ -161,7 +161,7 @@ async def _create_or_update_incident(
         f"{len(detected.dark_pole_ids)} dark poles, confidence={detected.confidence}"
     )
 
-    return incident.id
+    return int(incident.id) if incident.id else None
 
 
 async def run_localization_cycle():

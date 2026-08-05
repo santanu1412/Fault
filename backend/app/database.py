@@ -9,8 +9,10 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.config import settings
 
+from typing import AsyncGenerator, Any
+
 is_sqlite = settings.database_url.startswith("sqlite")
-engine_kwargs = {"echo": False}
+engine_kwargs: dict[str, Any] = {"echo": False}
 if is_sqlite:
     engine_kwargs.update({"connect_args": {"check_same_thread": False}})
 else:
@@ -28,7 +30,7 @@ class Base(DeclarativeBase):
     """Base class for all ORM models."""
 
 
-async def get_session() -> AsyncSession:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """Dependency that yields a database session."""
     async with async_session() as session:
         yield session

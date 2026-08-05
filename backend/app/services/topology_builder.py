@@ -277,22 +277,22 @@ async def build_all_trees(session: AsyncSession) -> dict[str, DtTree]:
             ]
 
             tree = build_tree_from_edges(
-                dt_id=dt.dt_id,
-                dt_lat=dt.lat,
-                dt_lon=dt.lon,
-                feeder_id=dt.feeder_id,
-                households=dt.households_served,
+                dt_id=str(dt.dt_id),
+                dt_lat=float(dt.lat),
+                dt_lon=float(dt.lon),
+                feeder_id=str(dt.feeder_id),
+                households=int(dt.households_served),
                 poles=poles,
                 edges=edges,
             )
         else:
             # Infer topology via MST
             tree, inferred_edges = build_tree_from_mst(
-                dt_id=dt.dt_id,
-                dt_lat=dt.lat,
-                dt_lon=dt.lon,
-                feeder_id=dt.feeder_id,
-                households=dt.households_served,
+                dt_id=str(dt.dt_id),
+                dt_lat=float(dt.lat),
+                dt_lon=float(dt.lon),
+                feeder_id=str(dt.feeder_id),
+                households=int(dt.households_served),
                 poles=poles,
             )
 
@@ -305,7 +305,7 @@ async def build_all_trees(session: AsyncSession) -> dict[str, DtTree]:
                 )
                 await session.execute(stmt)
 
-        trees[dt.dt_id] = tree
+        trees[str(dt.dt_id)] = tree
 
     await session.commit()
     logger.info(f"Built {len(trees)} DT trees.")
