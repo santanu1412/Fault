@@ -96,7 +96,7 @@ class TelemetryConsumer:
 
                 if entries:
                     for stream_name, messages in entries:  # type: ignore
-                        await self.process_batch(messages)
+                        await self.process_batch(messages)  # type: ignore
 
                 # 2. Periodically claim stale pending messages from crashed workers
                 await self._claim_stale_messages()

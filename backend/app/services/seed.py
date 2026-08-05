@@ -296,7 +296,7 @@ async def seed_if_needed(session: AsyncSession) -> bool:
         [t["dt_id"] for t in all_transformers],
         min(3, len(all_transformers)),
     )
-    for dt_id in outage_dts:
+    for dt_id in outage_dts:  # type: ignore
         outage = {  # type: ignore
             "scope": "dt",
             "target_id": dt_id,
