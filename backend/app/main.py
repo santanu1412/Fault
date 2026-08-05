@@ -10,7 +10,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.events import router as events_router
@@ -112,7 +112,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register all route modules
+@app.middleware("http")
+async def rewrite_vercel_path(request: Request, call_next):
+    """Strip Vercel's rewritten path prefix if present."""
+    print("Vercel middleware original path:", request.scope.get("path"))
+    print("Vercel headers:", dict(request.headers))
+    
+    if request.scope.get("path", "").startswith("/api/index.py"):
+        # Vercel prepends /api/index.py to the path due to rewrites
+        new_path = request.scope["path"].replace("/api/index.py", "/api", 1)
+        
+        # If it's exactly /api/index.py, map to /api
+        if request.scope["path"] == "/api/index.py":
+            new_path = "/api"
+            
+        request.scope["path"] = new_path
+        request.scope["raw_path"] = new_path.encode()
+        print("Vercel middleware REWRITTEN path:", new_path)
+        
+    return await call_next(request)
+
+# Register all route modules for standard /api
 app.include_router(health_router, prefix="/api")
 app.include_router(telemetry_router, prefix="/api")
 app.include_router(incidents_router, prefix="/api")
