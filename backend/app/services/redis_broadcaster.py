@@ -96,7 +96,7 @@ class Event:
         return f"id: {self.id}\nevent: {self.type}\ndata: {self.to_json()}\n\n"
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False)
 class Subscriber:
     queue: asyncio.Queue[Event]
     tenant_id: str | None
