@@ -1,0 +1,24 @@
+services:
+  # Python FastAPI Backend
+  - type: web
+    name: fault-backend
+    env: docker
+    region: oregon
+    dockerContext: backend
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql+asyncpg://fault_user:ve9NaUQwQH4sPx5F50o1sg6FeH2aPeLb@dpg-d9phbhv10e5c73de2ktg-a/fault
+      
+  # React Frontend
+  - type: web
+    name: fault-frontend
+    env: static
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: fault-backend
+          envVarKey: RENDER_EXTERNAL_URL
