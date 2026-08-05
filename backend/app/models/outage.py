@@ -11,10 +11,7 @@ class ScheduledOutage(Base):
     __tablename__ = "scheduled_outages"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    scope: str = Column(
-        SAEnum("pole", "dt", "feeder", name="outage_scope_enum"),
-        nullable=False,
-    )
+    scope: str = Column(SAEnum("dt", "feeder", name="outage_scope_enum"), nullable=False)  # type: ignore
     target_id = Column(String, nullable=False, index=True)  # pole_id, dt_id, or feeder_id
     start_at = Column(DateTime(timezone=True), nullable=False)
     end_at = Column(DateTime(timezone=True), nullable=False)

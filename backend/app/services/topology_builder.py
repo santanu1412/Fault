@@ -265,7 +265,7 @@ async def build_all_trees(session: AsyncSession) -> dict[str, DtTree]:
 
         if has_topology:
             # Load surveyed edges
-            result = await session.execute(
+            edge_result = await session.execute(
                 select(TopologyEdge).where(TopologyEdge.dt_id == dt.dt_id)
             )
             edges = [
@@ -273,7 +273,7 @@ async def build_all_trees(session: AsyncSession) -> dict[str, DtTree]:
                     "child_pole_id": e.child_pole_id,
                     "parent_pole_id": e.parent_pole_id,
                 }
-                for e in result.scalars().all()
+                for e in edge_result.scalars().all()
             ]
 
             tree = build_tree_from_edges(

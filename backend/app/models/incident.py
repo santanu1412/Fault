@@ -1,6 +1,6 @@
 """Incident model — a detected fault region with boundary, coordinates, and confidence."""
 
-from sqlalchemy import Column, DateTime, Float, Integer, JSON, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, JSON, String
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import relationship

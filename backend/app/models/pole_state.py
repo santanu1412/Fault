@@ -20,7 +20,7 @@ class PoleState(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     last_event_type = Column(String, nullable=True)  # heartbeat, power_lost, power_restored
-    classification: str = Column(
+    classification: str = Column(  # type: ignore
         SAEnum("ok", "dark_confirmed", "sensor_suspect", name="pole_classification_enum"),
         nullable=False,
         default="ok",
